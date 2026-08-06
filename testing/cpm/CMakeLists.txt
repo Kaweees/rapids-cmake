@@ -1,6 +1,6 @@
 # =============================================================================
 # cmake-format: off
-# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 # cmake-format: on
 # =============================================================================
@@ -18,6 +18,7 @@ add_cmake_config_test(cpm_find-existing-build-dir)
 add_cmake_config_test(cpm_find-existing-target)
 add_cmake_config_test(cpm_find-existing-target-to-export-sets)
 add_cmake_config_test(cpm_find-gtest-no-gmock)
+add_cmake_config_test(cpm_find-global-targets-no-values)
 add_cmake_config_test(cpm_find-options-escaped)
 add_cmake_config_test(cpm_find-patch-command-git NO_CPM_CACHE)
 add_cmake_config_test(cpm_find-patch-command-tarball NO_CPM_CACHE)
@@ -28,9 +29,9 @@ add_cmake_config_test(cpm_find-patch-command-embedded-tarball NO_CPM_CACHE)
 add_cmake_config_test(cpm_find-patch-command-required-git NO_CPM_CACHE)
 add_cmake_config_test(cpm_find-patch-command-required-tarball NO_CPM_CACHE)
 add_cmake_config_test(cpm_find-patch-command-required-fails-git NO_CPM_CACHE SHOULD_FAIL
-                      "rapids-cmake [GTest]: failed to apply patch")
+                      "rapids-cmake \\[GTest\\]: failed to apply patch")
 add_cmake_config_test(cpm_find-patch-command-required-fails-tarball NO_CPM_CACHE SHOULD_FAIL
-                      "rapids-cmake [GTest]: failed to apply patch")
+                      "rapids-cmake \\[GTest\\]: failed to apply patch")
 add_cmake_config_test(cpm_find-restore-cpm-vars)
 add_cmake_config_test(cpm_find-version-explicit-install.cmake)
 
@@ -46,8 +47,8 @@ add_cmake_build_test(cpm_generate_pins-var-and-arg)
 add_cmake_build_test(cpm_generate_pins-url-mode)
 add_cmake_config_test(cpm_convert_patch_json-special-chars.cmake)
 
-add_cmake_config_test(cpm_init-bad-default-path.cmake SHOULD_FAIL "rapids_cpm_init can't load")
-add_cmake_config_test(cpm_init-bad-default-cmake-var.cmake SHOULD_FAIL "rapids_cpm_init can't load")
+add_cmake_config_test(cpm_init-bad-default-path.cmake SHOULD_FAIL "rapids_cpm can't load")
+add_cmake_config_test(cpm_init-bad-default-cmake-var.cmake SHOULD_FAIL "rapids_cpm can't load")
 add_cmake_config_test(cpm_init-bad-override-path.cmake SHOULD_FAIL
                       "rapids_cpm_package_override can't load")
 add_cmake_config_test(cpm_init-bad-override-cmake-var.cmake SHOULD_FAIL
@@ -78,9 +79,9 @@ add_cmake_config_test(cpm_package_override-source-subdir.cmake)
 add_cmake_config_test(cpm_package_override-simple.cmake)
 add_cmake_config_test(cpm_package_override-url-mode.cmake)
 add_cmake_config_test(cpm_package_override-url-without-hash.cmake SHOULD_FAIL
-                      "has 'url' but is missing 'url_hash'")
+                      "has 'url' but is\n  missing 'url_hash'")
 add_cmake_config_test(cpm_package_override-hash-without-url.cmake SHOULD_FAIL
-                      "has 'url_hash' but is missing 'url'")
+                      "has 'url_hash' but is\n  missing 'url'")
 add_cmake_config_test(cpm_package_override-url-to-git.cmake)
 add_cmake_config_test(cpm_package_override-git-to-url.cmake)
 
@@ -118,12 +119,12 @@ add_cmake_config_test(cpm_gtest-export.cmake)
 add_cmake_config_test(cpm_gtest-simple.cmake)
 add_cmake_config_test(cpm_gtest-static.cmake)
 add_cmake_config_test(cpm_gtest-explicit-static.cmake)
+add_cmake_config_test(cpm_libcoro-simple.cmake)
 
 add_cmake_config_test(cpm_logger-simple.cmake)
 
 add_cmake_config_test(cpm_nvbench-export.cmake SERIAL)
 add_cmake_config_test(cpm_nvbench-simple.cmake SERIAL)
-add_cmake_config_test(cpm_nvbench-already-found-fmt.cmake SERIAL)
 add_cmake_build_test(cpm_nvbench-conda.cmake SERIAL)
 add_cmake_config_test(cpm_nvbench-explicit-static.cmake SERIAL)
 

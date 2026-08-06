@@ -1,11 +1,11 @@
 # =============================================================================
 # cmake-format: off
-# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 # cmake-format: on
 # =============================================================================
 
-cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.0 FATAL_ERROR)
 project(rapids-cmake-testing LANGUAGES NONE)
 
 enable_testing()
@@ -33,4 +33,9 @@ if(RAPIDS_CMAKE_ENABLE_DOWNLOAD_TESTS)
   add_subdirectory(cython-core)
   add_subdirectory(examples)
   add_subdirectory(other)
+endif()
+
+# TODO: Remove this version gate once we require 4.3
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.3)
+  add_subdirectory(json)
 endif()

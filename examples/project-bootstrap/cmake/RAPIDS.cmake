@@ -5,7 +5,7 @@
 # cmake-format: on
 # =============================================================================
 
-cmake_minimum_required(VERSION 3.30.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.0 FATAL_ERROR)
 
 # When running under rapids-cmake testing infrastructure, rapids-cmake-dir is already set In this
 # case, skip downloading and just use the provided local version
@@ -59,10 +59,12 @@ if(rapids-cmake-fetch-via-git)
   # Git clone (use when you need uncommitted changes or specific SHAs)
   FetchContent_Declare(rapids-cmake GIT_REPOSITORY "${rapids-cmake-url}"
                        GIT_TAG "${rapids-cmake-value-to-clone}")
+  message(STATUS "Fetching rapids-cmake from ${rapids-cmake-url}@${rapids-cmake-value-to-clone}")
 else()
   # ZIP archive (default, faster)
   string(APPEND rapids-cmake-url "${rapids-cmake-value-to-clone}")
   FetchContent_Declare(rapids-cmake URL "${rapids-cmake-url}")
+  message(STATUS "Fetching rapids-cmake from ${rapids-cmake-url}")
 endif()
 
 # Populate rapids-cmake and add to CMAKE_MODULE_PATH

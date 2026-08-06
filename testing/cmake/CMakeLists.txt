@@ -1,6 +1,6 @@
 # =============================================================================
 # cmake-format: off
-# SPDX-FileCopyrightText: Copyright (c) 2021-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 # cmake-format: on
 # =============================================================================
@@ -11,6 +11,17 @@ add_cmake_config_test(build_type-debug.cmake)
 add_cmake_config_test(build_type-multiple.cmake)
 add_cmake_config_test(build_type-user-specified.cmake)
 
+string(CONCAT check_conda_env_error_message
+              "Conda environment changed since this build directory was configured\\.\n\n"
+              "    Configured with: /opt/conda/prefix-a\n"
+              "    Current env:     /opt/conda/prefix-b\n\n"
+              "  Delete the build directory and reconfigure:\n\n    ")
+add_cmake_config_test(check_conda_env.cmake)
+add_cmake_config_test(check_conda_env-mismatch.cmake SHOULD_FAIL
+                      "${check_conda_env_error_message}rm -rf ${CMAKE_BINARY_DIR}")
+add_cmake_config_test(check_conda_env-mismatch-rebuild-instruction.cmake SHOULD_FAIL
+                      "${check_conda_env_error_message}foo")
+
 add_cmake_config_test(conda_env-build.cmake)
 add_cmake_config_test(conda_env-build-envvar.cmake)
 add_cmake_config_test(conda_env-cross-build-arm.cmake)
@@ -20,6 +31,10 @@ add_cmake_config_test(conda_env-cross-build-x86-envvar.cmake)
 add_cmake_config_test(conda_env-invalid.cmake)
 add_cmake_config_test(conda_env-prefix.cmake)
 add_cmake_config_test(conda_env-prefix-envvar.cmake)
+
+add_cmake_build_test(default_install_component-simple)
+add_cmake_build_test(default_install_component-sibling-default)
+add_cmake_build_test(default_install_component-sibling-mixed)
 
 add_cmake_config_test(download_with_retry-basic.cmake)
 add_cmake_config_test(download_with_retry-overwrite.cmake)

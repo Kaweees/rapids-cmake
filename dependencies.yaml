@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
 # Dependency list for https://github.com/rapidsai/dependency-file-generator
@@ -31,7 +31,7 @@ dependencies:
     common:
       - output_types: [conda, requirements]
         packages:
-          - cmake>=3.30.4
+          - cmake>=4.0
           - ninja
       - output_types: conda
         packages:
@@ -97,11 +97,20 @@ dependencies:
               cuda: "13.1"
             packages:
               - cuda-version=13.1
+          - matrix:
+              cuda: "13.2"
+            packages:
+              - cuda-version=13.2
+          - matrix:
+              cuda: "13.3"
+            packages:
+              - cuda-version=13.3
   cuda:
     common:
       - output_types: conda
         packages:
           - cuda-cupti-dev
+          - cuda-profiler-api
   docs:
     common:
       - output_types: [conda]
@@ -111,7 +120,8 @@ dependencies:
               - sphinxcontrib-moderncmakedomain
           - sphinx
           - sphinx-copybutton
-          - sphinx_rtd_theme
+          - pip:
+              - nvidia-sphinx-theme
   test:
     common:
       - output_types: [conda, requirements]

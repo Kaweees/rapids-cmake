@@ -1,3 +1,81 @@
+# rapids-cmake 26.08.00 (5 Aug 2026)
+
+### 🐛 Bug Fixes
+* Fix how tests are executed by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1028
+* Adds `versions.json` and user-provided `versions.json` to `CMAKE_CONFIGURE_DEPENDS`. by @arhag23 in https://github.com/rapidsai/rapids-cmake/pull/1030
+* Fix how tests with arguments are relocated in install tree by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1050
+* Pin CMake to < 4.4 by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1053
+* fix(clang-format): preserve SPDX comments by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1054
+* Fix errors introduced by CMake 4.4 by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1052
+* Add `--test-dir` argument when invoking CTest by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1057
+### 📖 Documentation
+* Fix escaped backticks around `INSTALL_EXPORT_SET` in dependency tracking docs by @ishanpragada in https://github.com/rapidsai/rapids-cmake/pull/1031
+* Update docs to use NVIDIA Sphinx theme by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1045
+### 🚀 New Features
+* Remove requirement to specify project name to cuda_init_architectures by @robertmaynard in https://github.com/rapidsai/rapids-cmake/pull/1017
+* rapids_find_generate_module: Support a pre-fphsa custom code block by @chuckatkins in https://github.com/rapidsai/rapids-cmake/pull/1025
+* `rapids_find_generate_module`: Support a custom `TARGET_NAME` by @chuckatkins in https://github.com/rapidsai/rapids-cmake/pull/1029
+* Add rapids_cpm_libcoro by @vyasr in https://github.com/rapidsai/rapids-cmake/pull/1035
+* Support configuring default install components for subprojects by @arhag23 in https://github.com/rapidsai/rapids-cmake/pull/1032
+* Add `rapids_json_compute_matrix_product()` function by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1026
+* Support zero-value `GLOBAL_TARGETS` in rapids-cmake APIs by @ishanpragada in https://github.com/rapidsai/rapids-cmake/pull/1040
+* Add `rapids_cmake_check_conda_env()` function by @arhag23 in https://github.com/rapidsai/rapids-cmake/pull/1042
+* Add agent skill for dependency version updates by @bdice in https://github.com/rapidsai/rapids-cmake/pull/991
+* Bump the cuco version to fetch the new bloom filter and some fixes by @PointKernel in https://github.com/rapidsai/rapids-cmake/pull/1044
+### 🛠️ Improvements
+* Require CMake 4.0 by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1021
+* Add SECURITY.md by @jameslamb in https://github.com/rapidsai/rapids-cmake/pull/1033
+* fix(ci): fix configuration for breaking change notification workflow by @jameslamb in https://github.com/rapidsai/rapids-cmake/pull/1036
+* Build and test with CUDA 13.3.0 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1041
+* Use main shared-workflows branch by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1043
+* Update CCCL to 3.4.0 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1049
+* Bump pre-commit-hooks to v1.6.0 by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1051
+* Update CCCL to 3.4.1 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1061
+* Update CCCL to 3.4.3 pre-release by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1067
+
+## New Contributors
+* @chuckatkins made their first contribution in https://github.com/rapidsai/rapids-cmake/pull/1025
+
+**Full Changelog**: https://github.com/rapidsai/rapids-cmake/compare/v26.08.00a...release/26.08
+
+# rapids-cmake 26.06.00 (3 Jun 2026)
+
+### 🚨 Breaking Changes
+* Allow proprietary_binary-only packages without git_url/git_tag by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1004
+* Remove nvcomp package and proprietary binary infrastructure by @vyasr in https://github.com/rapidsai/rapids-cmake/pull/1013
+### 🐛 Bug Fixes
+* Fix CCCL_DIR cache corruption from CPM redirect stub by @bdice in https://github.com/rapidsai/rapids-cmake/pull/997
+* export_cpm: Avoid saving CMake Package Redirection dir by @robertmaynard in https://github.com/rapidsai/rapids-cmake/pull/998
+* Revert "export_cpm: Avoid saving CMake Package Redirection dir (#998)" by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1000
+* export_cpm: Better <package>_DIR heuristic in the face of ambiguity by @robertmaynard in https://github.com/rapidsai/rapids-cmake/pull/1007
+* Fix rapids_cpm_nvtx3 unconditional NVTX3_INSTALL and undefined exclude variable by @vyasr in https://github.com/rapidsai/rapids-cmake/pull/1009
+* Update CCCL version by @KyleFromNVIDIA in https://github.com/rapidsai/rapids-cmake/pull/1015
+* Update CCCL version by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1018
+### 📖 Documentation
+* Update docs for proprietary_binary-only packages and nvCOMP by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1006
+### 🚀 New Features
+* Update rapids-cmake to have a set of examples showing common patterns by @robertmaynard in https://github.com/rapidsai/rapids-cmake/pull/976
+* Bump google benchmark version from 1.8.0 to 1.9.5 by @Jacobfaib in https://github.com/rapidsai/rapids-cmake/pull/992
+* Add offline build example and docs by @robertmaynard in https://github.com/rapidsai/rapids-cmake/pull/995
+* Upgrade to nvcomp 5.2.0.10 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1003
+* Support `EXCLUDE_FROM_ALL` in all `rapids_cpm_*` functions by @vyasr in https://github.com/rapidsai/rapids-cmake/pull/1010
+### 🛠️ Improvements
+* chore: bump `codespell` version for Python 3.14+ compatibility by @gforsyth in https://github.com/rapidsai/rapids-cmake/pull/989
+* Update CCCL to 3.4.0 pre-release by @bdice in https://github.com/rapidsai/rapids-cmake/pull/990
+* Update CCCL to 3.4.0 pre-release by @bdice in https://github.com/rapidsai/rapids-cmake/pull/996
+* Update to clang 20.1.8 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1001
+* Update CCCL version by @nirandaperera in https://github.com/rapidsai/rapids-cmake/pull/1008
+* Support tarball-mode packages in patch application by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1011
+* fix(ci): resolve all zizmor findings and add zizmor pre-commit checks by @gforsyth in https://github.com/rapidsai/rapids-cmake/pull/1016
+* Build and test with CUDA 13.2.0 by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1019
+* Use GitHub tarball downloads for CPM dependencies by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1005
+* fix(ci): add explicit `actions: write` permission for `telemetry-summarize`
+ by @gforsyth in https://github.com/rapidsai/rapids-cmake/pull/1020
+* Update CCCL version by @bdice in https://github.com/rapidsai/rapids-cmake/pull/1022
+
+
+**Full Changelog**: https://github.com/rapidsai/rapids-cmake/compare/v26.06.00a...release/26.06
+
 # rapids-cmake 26.04.00 (8 Apr 2026)
 
 ### 🚨 Breaking Changes

@@ -8,6 +8,7 @@ include_guard(GLOBAL)
 
 include(utils/cmake_detect_generators.cmake)
 
+# rapids-pre-commit-hooks: disable[verify-hardcoded-version]
 #[=======================================================================[.rst:
 add_cmake_build_test
 --------------------
@@ -31,6 +32,7 @@ adds a test for each generator:
                          [NO_RAPIDS_CMAKE_HOOKS]
                          [SOURCE_DIR <absolute_path>]
                          [SHOULD_FAIL <expected error message string>]
+                         [EXPECT_MATCH <expected output regular expression>]
                       )
 
 ``config``
@@ -55,10 +57,17 @@ adds a test for each generator:
   Absolute path to the source directory to test. When provided, this overrides
   the default behavior of computing the source directory from <SourceOrDir>.
 
+``EXPECT_MATCH``
+  .. versionadded:: v26.08.00
+
+  Regular expression that must match the test command output when the test is
+  expected to succeed.
+
 #]=======================================================================]
+# rapids-pre-commit-hooks: enable[verify-hardcoded-version]
 function(add_cmake_test mode source_or_dir)
   set(options SERIAL NO_DEV_ERRORS NO_CPM_CACHE NO_RAPIDS_CMAKE_HOOKS)
-  set(one_value SHOULD_FAIL SOURCE_DIR)
+  set(one_value SHOULD_FAIL SOURCE_DIR EXPECT_MATCH)
   set(multi_value)
   cmake_parse_arguments(RAPIDS_TEST "${options}" "${one_value}" "${multi_value}" ${ARGN})
 
@@ -107,6 +116,17 @@ function(add_cmake_test mode source_or_dir)
     endforeach()
   endif()
 
+  if(RAPIDS_TEST_SHOULD_FAIL)
+    set(will_fail TRUE)
+    set(expected_regular_expression "${RAPIDS_TEST_SHOULD_FAIL}")
+  else()
+    set(will_fail FALSE)
+    set(expected_regular_expression)
+    if(RAPIDS_TEST_EXPECT_MATCH)
+      set(expected_regular_expression "${RAPIDS_TEST_EXPECT_MATCH}")
+    endif()
+  endif()
+
   foreach(generator gen_name IN ZIP_LISTS supported_generators nice_gen_names)
 
     set(test_name "${test_name_stem}-${gen_name}")
@@ -114,9 +134,11 @@ function(add_cmake_test mode source_or_dir)
 
     if(mode STREQUAL "config")
       add_test(NAME ${test_name}
-               COMMAND ${CMAKE_COMMAND} -S ${src_dir} -B ${build_dir} -G "${generator}"
-                       ${extra_configure_flags} -Drapids-cmake-testing-dir=${PROJECT_SOURCE_DIR}
-                       -Drapids-cmake-dir=${PROJECT_SOURCE_DIR}/../rapids-cmake)
+               COMMAND ${CMAKE_COMMAND}
+                       "-DTEST_COMMAND=${CMAKE_COMMAND};-S;${src_dir};-B;${build_dir};-G;${generator};${extra_configure_flags};-Drapids-cmake-testing-dir=${PROJECT_SOURCE_DIR};-Drapids-cmake-dir=${PROJECT_SOURCE_DIR}/../rapids-cmake"
+                       "-DWILL_FAIL=${will_fail}"
+                       "-DEXPECTED_REGULAR_EXPRESSION=${expected_regular_expression}" -P
+                       "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/execute_cmake_test.cmake")
 
     elseif(mode STREQUAL "build")
       add_test(NAME ${test_name}_configure
@@ -124,7 +146,12 @@ function(add_cmake_test mode source_or_dir)
                        ${extra_configure_flags} -Drapids-cmake-testing-dir=${PROJECT_SOURCE_DIR}
                        -Drapids-cmake-dir=${PROJECT_SOURCE_DIR}/../rapids-cmake)
 
-      add_test(NAME ${test_name} COMMAND ${CMAKE_COMMAND} --build ${build_dir} -j3000)
+      add_test(NAME ${test_name}
+               COMMAND ${CMAKE_COMMAND}
+                       "-DTEST_COMMAND=${CMAKE_COMMAND};--build;${build_dir};-j3000"
+                       "-DWILL_FAIL=${will_fail}"
+                       "-DEXPECTED_REGULAR_EXPRESSION=${expected_regular_expression}" -P
+                       "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/execute_cmake_test.cmake")
 
       set_tests_properties(${test_name}_configure PROPERTIES FIXTURES_SETUP ${test_name})
       set_tests_properties(${test_name} PROPERTIES FIXTURES_REQUIRED ${test_name})
@@ -137,7 +164,11 @@ function(add_cmake_test mode source_or_dir)
       add_test(NAME ${test_name}_build COMMAND ${CMAKE_COMMAND} --build ${build_dir} -j3)
       set_tests_properties(${test_name}_build PROPERTIES DEPENDS ${test_name}_configure)
 
-      add_test(NAME ${test_name} COMMAND ${CMAKE_CTEST_COMMAND} -C Debug -j400 -VV
+      add_test(NAME ${test_name}
+               COMMAND ${CMAKE_COMMAND} "-DTEST_COMMAND=${CMAKE_CTEST_COMMAND};-C;Debug;-j400;-VV"
+                       "-DWILL_FAIL=${will_fail}"
+                       "-DEXPECTED_REGULAR_EXPRESSION=${expected_regular_expression}" -P
+                       "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/execute_cmake_test.cmake"
                WORKING_DIRECTORY ${build_dir})
 
       set_tests_properties(${test_name}_configure PROPERTIES FIXTURES_SETUP ${test_name})
@@ -159,16 +190,6 @@ function(add_cmake_test mode source_or_dir)
       if(TEST ${test_name}_build)
         set_tests_properties(${test_name}_build PROPERTIES RUN_SERIAL ON)
       endif()
-    endif()
-
-    if(RAPIDS_TEST_SHOULD_FAIL)
-      # Make sure we have a match
-      set_tests_properties(${test_name} PROPERTIES WILL_FAIL ON)
-      set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION
-                                                   "${RAPIDS_TEST_SHOULD_FAIL}")
-    else()
-      # Error out if we detect any CMake syntax warnings
-      set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "Syntax Warning")
     endif()
 
     # Apply a label to the test based on the folder it is in and the generator used

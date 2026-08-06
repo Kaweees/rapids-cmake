@@ -1,6 +1,6 @@
 # =============================================================================
 # cmake-format: off
-# SPDX-FileCopyrightText: Copyright (c) 2021-2025, NVIDIA CORPORATION.
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026, NVIDIA CORPORATION.
 # SPDX-License-Identifier: Apache-2.0
 # cmake-format: on
 # =============================================================================
@@ -26,7 +26,9 @@ Generate a Find*.cmake module for the requested package
                   [VERSION <version>]
                   [NO_CONFIG]
                   [INITIAL_CODE_BLOCK <code_block_variable>]
+                  [PRE_PACKAGE_VALIDATED_CODE_BOCK <code_block_variable>]
                   [FINAL_CODE_BLOCK <code_block_variable>]
+                  [TARGET_NAME <name>]
                   [BUILD_EXPORT_SET <name>]
                   [INSTALL_EXPORT_SET <name>]
                   )
@@ -50,9 +52,8 @@ when installed.
 
 ``LIBRARY_NAMES``
   library names that should be provided to :cmake:command:`find_library` to
-  determine the include directory of the package. If provided
-  a list of names only one needs to be found for a directory
-  to be considered a match
+  determine the link library file of the package. If provided a list of names
+  only one needs to be found for a library file
 
   .. note::
     Every entry that doesn't start with `lib` will also be
@@ -84,15 +85,34 @@ when installed.
   Optional value of the variable that holds a string of code that will
   be executed as the first step of this config file.
 
-  Note: This requires the code block variable instead of the contents
-  so that we can properly insert CMake code
+  .. note::
+    This requires the code block variable instead of the contents
+    so that we can properly insert CMake code.
+
+``PRE_PACKAGE_VALIDATED_CODE_BOCK``
+  Optional value of the variable that holds a string of code that will
+  be executed after :cmake:command:`find_path` and :cmake:command:`find_library` calls
+  but before :cmake:command:`find_package_handle_standard_args` in `MODULE` mode.
+
+  .. note::
+    This argument is particularly useful for inserting CMake code to extract
+    version information from header files.
+
+  .. note::
+    This requires the code block variable instead of the contents
+    so that we can properly insert CMake code.
 
 ``FINAL_CODE_BLOCK``
   Optional value of the variable that holds a string of code that will
   be executed as the last step of this config file.
 
-  Note: This requires the code block variable instead of the contents
-  so that we can properly insert CMake code
+  .. note::
+    This requires the code block variable instead of the contents
+    so that we can properly insert CMake code
+
+``TARGET_NAME``
+  Optional value of the imported target to create when found. If not specified,
+  the default value of `<PackageName>::<PackageName>` will be used.
 
 ``BUILD_EXPORT_SET``
   Record that this custom FindPackage module needs to be part
@@ -137,7 +157,8 @@ function(rapids_find_generate_module name)
   list(APPEND CMAKE_MESSAGE_CONTEXT "rapids.find.generate_module")
 
   set(options NO_CONFIG)
-  set(one_value VERSION BUILD_EXPORT_SET INSTALL_EXPORT_SET INITIAL_CODE_BLOCK FINAL_CODE_BLOCK)
+  set(one_value VERSION TARGET_NAME BUILD_EXPORT_SET INSTALL_EXPORT_SET INITIAL_CODE_BLOCK
+                PRE_PACKAGE_VALIDATED_CODE_BOCK FINAL_CODE_BLOCK)
   set(multi_value HEADER_NAMES LIBRARY_NAMES INCLUDE_SUFFIXES)
   cmake_parse_arguments(_RAPIDS "${options}" "${one_value}" "${multi_value}" ${ARGN})
 
@@ -176,12 +197,26 @@ function(rapids_find_generate_module name)
     endif()
   endif()
 
+  set(_RAPIDS_IMPORT_TARGET "${_RAPIDS_PKG_NAME}::${_RAPIDS_PKG_NAME}")
+  if(DEFINED _RAPIDS_TARGET_NAME)
+    set(_RAPIDS_IMPORT_TARGET "${_RAPIDS_TARGET_NAME}")
+  endif()
+
   if(DEFINED _RAPIDS_INITIAL_CODE_BLOCK)
     if(NOT DEFINED ${_RAPIDS_INITIAL_CODE_BLOCK})
       message(FATAL_ERROR "INITIAL_CODE_BLOCK variable `${_RAPIDS_INITIAL_CODE_BLOCK}` doesn't exist"
       )
     endif()
     set(_RAPIDS_FIND_INITIAL_CODE_BLOCK "${${_RAPIDS_INITIAL_CODE_BLOCK}}")
+  endif()
+
+  if(DEFINED _RAPIDS_PRE_PACKAGE_VALIDATED_CODE_BOCK)
+    if(NOT DEFINED ${_RAPIDS_PRE_PACKAGE_VALIDATED_CODE_BOCK})
+      message(FATAL_ERROR "PRE_PACKAGE_VALIDATED_CODE_BOCK variable `${_RAPIDS_PRE_PACKAGE_VALIDATED_CODE_BOCK}` doesn't exist"
+      )
+    endif()
+    set(_RAPIDS_FIND_PRE_PACKAGE_VALIDATED_CODE_BOCK
+        "${${_RAPIDS_PRE_PACKAGE_VALIDATED_CODE_BOCK}}")
   endif()
 
   if(DEFINED _RAPIDS_FINAL_CODE_BLOCK)
